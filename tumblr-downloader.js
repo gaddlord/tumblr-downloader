@@ -15,7 +15,7 @@ const { promisify } = require('util');
 
 const USERNAME = 'YOUR_TUMBLR_USERNAME';
 const API_KEY = 'YOUR_TUMBLR_API_KEY';
-const IMAGE_DIR = 'C:/tumblr/';
+const IMAGE_DIR = 'C:/tumblr';
 const DEFAULT_BATCH_SIZE = 50;
 const CREATE_DIR_FOR_EACH_BOARD = false;
 const UNLIKE_DOWNLOADED_LIKES = false;
@@ -72,8 +72,11 @@ async function getPhotos(limit = 0) {
   if (statusCode !== 200) {
     console.error(responseJson.meta.msg);
   }
-  before = responseJson.response._links.next.query_params.before;
   await downloadLikes(responseJson.response.liked_posts);
+  if (!responseJson.response._links.next) {
+    return;
+  }
+  before = responseJson.response._links.next.query_params.before;
 }
 
 function getFilename(url) {
